@@ -1,0 +1,11 @@
+platform:ios, '7.0'
+
+target XXAudioVideo do
+   source 'https://github.com/CocoaPods/Specs.git'
+
+   #public third-party pods
+   pod 'AFNetworking'
+   pod 'Masonry'
+   pod 'GPUImage'
+   #pod 'OpenCVLib' #binary version of openCV 2.4.11
+end
