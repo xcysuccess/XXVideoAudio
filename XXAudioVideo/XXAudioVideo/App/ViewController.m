@@ -13,6 +13,7 @@
 #import "XXFFmpegRemuxerViewController.h"
 #import "XXFFmpegDecoderViewController.h"
 #import "XXH265FileDecodeViewController.h"
+#import "XXH264RGBFileDecodeViewController.h"
 
 #import "LAScreenEx.h"
 
@@ -34,7 +35,8 @@
                              @"H265硬件-编解码",
                              @"H264FFmpeg-纯净版格式转换保存本地",
                              @"H264FFmpeg-解码保存与显示",
-                             @"H265硬件-解码文件显示",nil];
+                             @"H265硬件-解码文件显示",
+                             @"H264硬解-RGB格式并上屏",nil];
     self.listArray = array;
     
 }
@@ -115,6 +117,10 @@
             break;
         case 5:{
             viewController = [[XXH265FileDecodeViewController alloc] init];
+        }
+            break;
+        case 6:{
+            viewController = [[XXH264RGBFileDecodeViewController alloc] init];
         }
             break;
         default:

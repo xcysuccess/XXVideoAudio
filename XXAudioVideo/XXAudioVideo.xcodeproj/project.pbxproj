@@ -223,6 +223,12 @@
 		9AA396621F00B3D100F96402 /* GPUImagePicture+TextureSubimage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AA395B21F00B3D100F96402 /* GPUImagePicture+TextureSubimage.m */; };
 		9AA396631F00B3D100F96402 /* GPUImagePicture.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AA395B41F00B3D100F96402 /* GPUImagePicture.m */; };
 		9AA396641F00B3D100F96402 /* GPUImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AA395B61F00B3D100F96402 /* GPUImageView.m */; };
+		9AA9200B1F6127EE00BC0037 /* H264RGBDecoderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AA920081F6127EE00BC0037 /* H264RGBDecoderImpl.m */; };
+		9AA9200F1F612E3600BC0037 /* XXRGBOpenGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AA9200E1F612E3600BC0037 /* XXRGBOpenGLView.m */; };
+		9AA920141F612F2000BC0037 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 9AA920111F612F1F00BC0037 /* Shader.vsh */; };
+		9AA920151F612F2000BC0037 /* GLSLUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AA920121F612F1F00BC0037 /* GLSLUtils.m */; };
+		9AA920161F612F2000BC0037 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 9AA920131F612F2000BC0037 /* Shader.fsh */; };
+		9AA920201F613E9A00BC0037 /* XXH264RGBFileDecodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AA9201F1F613E9A00BC0037 /* XXH264RGBFileDecodeViewController.m */; };
 		9AADC8BD1F0DD11100610C0A /* H265HwEncoderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AADC8BC1F0DD11100610C0A /* H265HwEncoderImpl.m */; };
 		9AADC8C31F0DD16600610C0A /* OSMOBeautyMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AADC8C01F0DD16100610C0A /* OSMOBeautyMenuView.m */; };
 		9AADC8C41F0DD16800610C0A /* XXCameraHardEncodeDecodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AADC8C21F0DD16100610C0A /* XXCameraHardEncodeDecodeViewController.m */; };
@@ -720,6 +726,16 @@
 		9AA395B41F00B3D100F96402 /* GPUImagePicture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUImagePicture.m; sourceTree = "<group>"; };
 		9AA395B51F00B3D100F96402 /* GPUImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPUImageView.h; sourceTree = "<group>"; };
 		9AA395B61F00B3D100F96402 /* GPUImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPUImageView.m; sourceTree = "<group>"; };
+		9AA920071F6127EE00BC0037 /* H264RGBDecoderImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H264RGBDecoderImpl.h; sourceTree = "<group>"; };
+		9AA920081F6127EE00BC0037 /* H264RGBDecoderImpl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = H264RGBDecoderImpl.m; sourceTree = "<group>"; };
+		9AA9200D1F612E3600BC0037 /* XXRGBOpenGLView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XXRGBOpenGLView.h; sourceTree = "<group>"; };
+		9AA9200E1F612E3600BC0037 /* XXRGBOpenGLView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XXRGBOpenGLView.m; sourceTree = "<group>"; };
+		9AA920101F612F1F00BC0037 /* GLSLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLSLUtils.h; sourceTree = "<group>"; };
+		9AA920111F612F1F00BC0037 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
+		9AA920121F612F1F00BC0037 /* GLSLUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLSLUtils.m; sourceTree = "<group>"; };
+		9AA920131F612F2000BC0037 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
+		9AA9201E1F613E9A00BC0037 /* XXH264RGBFileDecodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XXH264RGBFileDecodeViewController.h; sourceTree = "<group>"; };
+		9AA9201F1F613E9A00BC0037 /* XXH264RGBFileDecodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XXH264RGBFileDecodeViewController.m; sourceTree = "<group>"; };
 		9AADC8BB1F0DD11100610C0A /* H265HwEncoderImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = H265HwEncoderImpl.h; sourceTree = "<group>"; };
 		9AADC8BC1F0DD11100610C0A /* H265HwEncoderImpl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = H265HwEncoderImpl.m; sourceTree = "<group>"; };
 		9AADC8BF1F0DD16100610C0A /* OSMOBeautyMenuView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OSMOBeautyMenuView.h; sourceTree = "<group>"; };
@@ -1523,9 +1539,42 @@
 			path = Framework;
 			sourceTree = "<group>";
 		};
+		9AA920061F6127EE00BC0037 /* DecodeRGB */ = {
+			isa = PBXGroup;
+			children = (
+				9AA920101F612F1F00BC0037 /* GLSLUtils.h */,
+				9AA920121F612F1F00BC0037 /* GLSLUtils.m */,
+				9AA920111F612F1F00BC0037 /* Shader.vsh */,
+				9AA920131F612F2000BC0037 /* Shader.fsh */,
+				9AA9200D1F612E3600BC0037 /* XXRGBOpenGLView.h */,
+				9AA9200E1F612E3600BC0037 /* XXRGBOpenGLView.m */,
+				9AA920071F6127EE00BC0037 /* H264RGBDecoderImpl.h */,
+				9AA920081F6127EE00BC0037 /* H264RGBDecoderImpl.m */,
+			);
+			path = DecodeRGB;
+			sourceTree = "<group>";
+		};
+		9AA9201C1F613D8E00BC0037 /* H264RGBFileDecode */ = {
+			isa = PBXGroup;
+			children = (
+				9AA9201D1F613DA900BC0037 /* viewcontroller */,
+			);
+			path = H264RGBFileDecode;
+			sourceTree = "<group>";
+		};
+		9AA9201D1F613DA900BC0037 /* viewcontroller */ = {
+			isa = PBXGroup;
+			children = (
+				9AA9201E1F613E9A00BC0037 /* XXH264RGBFileDecodeViewController.h */,
+				9AA9201F1F613E9A00BC0037 /* XXH264RGBFileDecodeViewController.m */,
+			);
+			path = viewcontroller;
+			sourceTree = "<group>";
+		};
 		9AAC54D31F025299005C2053 /* H264 */ = {
 			isa = PBXGroup;
 			children = (
+				9AA920061F6127EE00BC0037 /* DecodeRGB */,
 				9AB7DEEC1F0A1EB000AC3463 /* Decode */,
 				9AB7DEED1F0A1EB000AC3463 /* Encode */,
 			);
@@ -2028,6 +2077,7 @@
 				9AF012441F49B1DF003C0453 /* Base */,
 				9AF012461F49B24F003C0453 /* H264CameraEncodeDecodeShow */,
 				9AF012481F49B2A3003C0453 /* H265CameraEncodeDecodeShow */,
+				9AA9201C1F613D8E00BC0037 /* H264RGBFileDecode */,
 				9AD331471F0CCA15008CB2EC /* H264FileDecode */,
 				9A33A3641F4C210400AAB8A3 /* H265FileDecode */,
 			);
@@ -2159,6 +2209,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AA920161F612F2000BC0037 /* Shader.fsh in Resources */,
 				9A33A36A1F4C5CEF00AAB8A3 /* testh265.hevc in Resources */,
 				9AADC8D61F0F29C700610C0A /* test.h264 in Resources */,
 				9AA391AB1F00A6B300F96402 /* LaunchScreen.storyboard in Resources */,
@@ -2166,6 +2217,7 @@
 				9AA3965F1F00B3D100F96402 /* Info.plist in Resources */,
 				9AA393801F00ADE800F96402 /* LICENSE in Resources */,
 				9A7603871F288E7800CAA2E3 /* FFmpegTest.yuv in Resources */,
+				9AA920141F612F2000BC0037 /* Shader.vsh in Resources */,
 				9AA3943F1F00ADE800F96402 /* LICENSE in Resources */,
 				9AA391A61F00A6B300F96402 /* Main.storyboard in Resources */,
 				9A76039F1F2B1CE000CAA2E3 /* sintel.mov in Resources */,
@@ -2333,11 +2385,13 @@
 				9AA395EA1F00B3D100F96402 /* GPUImageFramebufferCache.m in Sources */,
 				9AA395CF1F00B3D100F96402 /* GPUImageColorLocalBinaryPatternFilter.m in Sources */,
 				9AA393851F00ADE800F96402 /* UIActivityIndicatorView+AFNetworking.m in Sources */,
+				9AA9200F1F612E3600BC0037 /* XXRGBOpenGLView.m in Sources */,
 				9AA3937A1F00ADE800F96402 /* AFHTTPSessionManager.m in Sources */,
 				9AADC8D01F0E714A00610C0A /* LALiveConfiguration.m in Sources */,
 				9AA396081F00B3D100F96402 /* GPUImageLineGenerator.m in Sources */,
 				9AA394431F00ADE800F96402 /* MASLayoutConstraint.m in Sources */,
 				9AA395D31F00B3D100F96402 /* GPUImageColourFASTSamplingOperation.m in Sources */,
+				9AA9200B1F6127EE00BC0037 /* H264RGBDecoderImpl.m in Sources */,
 				9AA395D21F00B3D100F96402 /* GPUImageColourFASTFeatureDetector.m in Sources */,
 				9AA3960D1F00B3D100F96402 /* GPUImageLuminanceThresholdFilter.m in Sources */,
 				9AA393891F00ADE800F96402 /* UIRefreshControl+AFNetworking.m in Sources */,
@@ -2389,6 +2443,7 @@
 				9AF0123E1F49B0F2003C0453 /* XXFFmpegYuvToH264.m in Sources */,
 				9AA396261F00B3D100F96402 /* GPUImagePoissonBlendFilter.m in Sources */,
 				9AA396551F00B3D100F96402 /* GPUImageUIElement.m in Sources */,
+				9AA920201F613E9A00BC0037 /* XXH264RGBFileDecodeViewController.m in Sources */,
 				9AA396411F00B3D100F96402 /* GPUImageSourceOverBlendFilter.m in Sources */,
 				9AA396451F00B3D100F96402 /* GPUImageSubtractBlendFilter.m in Sources */,
 				9AD3314D1F0CCAD2008CB2EC /* XXFileDecodeView.m in Sources */,
@@ -2406,6 +2461,7 @@
 				9AA395CB1F00B3D100F96402 /* GPUImageColorBurnBlendFilter.m in Sources */,
 				9AA3965C1F00B3D100F96402 /* GPUImageWhiteBalanceFilter.m in Sources */,
 				9AA3964C1F00B3D100F96402 /* GPUImageThresholdSketchFilter.m in Sources */,
+				9AA920151F612F2000BC0037 /* GLSLUtils.m in Sources */,
 				9AA396111F00B3D100F96402 /* GPUImageMedianFilter.m in Sources */,
 				9AA3963F1F00B3D100F96402 /* GPUImageSolarizeFilter.m in Sources */,
 				9AA3962B1F00B3D100F96402 /* GPUImageRawDataInput.m in Sources */,

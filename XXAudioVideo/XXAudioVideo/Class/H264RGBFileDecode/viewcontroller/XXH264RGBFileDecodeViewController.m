@@ -1,27 +1,27 @@
 //
-//  XXCameraViewController.m
-//  XXCamara
+//  XXH264RGBFileDecodeViewController.m
+//  XXAudioVideo
 //
-//  Created by tomxiang on 20/10/2016.
-//  Copyright © 2016 tomxiang. All rights reserved.
+//  Created by tomxiang on 2017/9/7.
+//  Copyright © 2017年 tomxiang. All rights reserved.
 //
 
-#import "XXH264FileDecodeViewController.h"
+#import "XXH264RGBFileDecodeViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "XXFileDecodeView.h"
 #import "VideoFileParser.h"
 
 #import "Masonry.h"
 #import "LASessionSize.h"
-#import "H264HwDecoderImpl.h"
-#import "AAPLEAGLLayer.h"
+#import "H264RGBDecoderImpl.h"
+#import "XXRGBOpenGLView.h"
 #include "pthread.h"
 
-@interface XXH264FileDecodeViewController ()<AVCaptureVideoDataOutputSampleBufferDelegate,H264HwDecoderImplDelegate,XXFileDecodeViewDelegate>
+@interface XXH264RGBFileDecodeViewController ()<AVCaptureVideoDataOutputSampleBufferDelegate,H264RGBDecoderImplDelegate,XXFileDecodeViewDelegate>
 {
     XXFileDecodeView   *_beautyMenuView;
-    H264HwDecoderImpl *_h264Decoder;
-    AAPLEAGLLayer *_playLayer;
+    H264RGBDecoderImpl *_h264Decoder;
+    XXRGBOpenGLView *_playLayer;
     VideoFileParser *_fileParser;
 }
 @property (nonatomic,strong) NSThread  *encodeThread;
@@ -29,7 +29,7 @@
 
 @end
 
-@implementation XXH264FileDecodeViewController
+@implementation XXH264RGBFileDecodeViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -50,16 +50,16 @@
         make.height.mas_equalTo(100);
     }];
     
-    _playLayer = [[AAPLEAGLLayer alloc] initWithFrame:CGRectMake(20, 20, self.view.frame.size.width - 40, self.view.frame.size.height- 40)];
-    _playLayer.backgroundColor = [UIColor blackColor].CGColor;
-    [self.view.layer addSublayer:_playLayer];
+    _playLayer = [[XXRGBOpenGLView alloc] initWithFrame:self.view.bounds];
+    _playLayer.backgroundColor = [UIColor blackColor];
+    [self.view addSubview:_playLayer];
     
     [self.view bringSubviewToFront:_beautyMenuView];
 }
 
 - (void) initData{
     if (!_h264Decoder) {
-        _h264Decoder = [[H264HwDecoderImpl alloc] initWithConfiguration];
+        _h264Decoder = [[H264RGBDecoderImpl alloc] initWithConfiguration];
         _h264Decoder.delegate = self;
     }
     pthread_mutex_init(&_lockThread, NULL);
@@ -119,4 +119,5 @@
         
     }];
 }
+
 @end
