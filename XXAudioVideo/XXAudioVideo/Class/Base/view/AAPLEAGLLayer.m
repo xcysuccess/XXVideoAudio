@@ -69,6 +69,8 @@ static const GLfloat kColorConversion709[] = {
     GLuint _colorBufferHandle;
     
     const GLfloat *_preferredConversion;
+    
+    CVOpenGLESTextureCacheRef _videoTextureCache;
 }
 @property GLuint program;
 
@@ -87,7 +89,7 @@ static const GLfloat kColorConversion709[] = {
         CVPixelBufferRelease(_pixelBuffer);
     }
     _pixelBuffer = CVPixelBufferRetain(pb);
-
+    
     int frameWidth = (int)CVPixelBufferGetWidth(_pixelBuffer);
     int frameHeight = (int)CVPixelBufferGetHeight(_pixelBuffer);
     [self displayPixelBuffer:_pixelBuffer width:frameWidth height:frameHeight];
@@ -156,7 +158,15 @@ static const GLfloat kColorConversion709[] = {
      Create Y and UV textures from the pixel buffer. These textures will be drawn on the frame buffer Y-plane.
      */
     
-    CVOpenGLESTextureCacheRef _videoTextureCache;
+    // 11.创建视频纹理缓冲区
+    if (!_videoTextureCache) {
+        CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, _context, NULL, &_videoTextureCache);
+        if (err != noErr) {
+            NSLog(@"Error at CVOpenGLESTextureCacheCreate %d", err);
+            return;
+        }
+    }
+    [self cleanUpTextures];
     
     // Create CVOpenGLESTextureCacheRef for optimal CVPixelBufferRef to GLES texture conversion.
     err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, _context, NULL, &_videoTextureCache);
@@ -164,7 +174,7 @@ static const GLfloat kColorConversion709[] = {
         NSLog(@"Error at CVOpenGLESTextureCacheCreate %d", err);
         return;
     }
-
+    
     glActiveTexture(GL_TEXTURE0);
     
     err = CVOpenGLESTextureCacheCreateTextureFromImage(kCFAllocatorDefault,
@@ -287,10 +297,6 @@ static const GLfloat kColorConversion709[] = {
     [self cleanUpTextures];
     // Periodic texture cache flush every frame
     CVOpenGLESTextureCacheFlush(_videoTextureCache, 0);
-    
-    if(_videoTextureCache) {
-        CFRelease(_videoTextureCache);
-    }
 }
 
 # pragma mark - OpenGL setup
@@ -380,6 +386,9 @@ static const GLfloat kColorConversion709[] = {
         CFRelease(_chromaTexture);
         _chromaTexture = NULL;
     }
+    
+    // Periodic texture cache flush every frame
+    CVOpenGLESTextureCacheFlush(_videoTextureCache, 0);
 }
 
 #pragma mark -  OpenGL ES 2 shader compilation
@@ -408,8 +417,8 @@ const GLchar *shader_vsh = (const GLchar*)"attribute vec4 position;"
 "{"
 "    mat4 rotationMatrix = mat4(cos(preferredRotation), -sin(preferredRotation), 0.0, 0.0,"
 "                               sin(preferredRotation),  cos(preferredRotation), 0.0, 0.0,"
-"                               0.0,					    0.0, 1.0, 0.0,"
-"                               0.0,					    0.0, 0.0, 1.0);"
+"                               0.0,                        0.0, 1.0, 0.0,"
+"                               0.0,                        0.0, 0.0, 1.0);"
 "    gl_Position = position * rotationMatrix;"
 "    texCoordVarying = texCoord;"
 "}";
@@ -589,6 +598,10 @@ const GLchar *shader_vsh = (const GLchar*)"attribute vec4 position;"
         _context = nil;
     }
     //[super dealloc];
+    if(_videoTextureCache) {
+        CFRelease(_videoTextureCache);
+    }
 }
 
 @end
+
