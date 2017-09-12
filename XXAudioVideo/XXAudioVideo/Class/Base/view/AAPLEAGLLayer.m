@@ -69,8 +69,6 @@ static const GLfloat kColorConversion709[] = {
     GLuint _colorBufferHandle;
     
     const GLfloat *_preferredConversion;
-    
-    CVOpenGLESTextureCacheRef _videoTextureCache;
 }
 @property GLuint program;
 
@@ -158,15 +156,7 @@ static const GLfloat kColorConversion709[] = {
      Create Y and UV textures from the pixel buffer. These textures will be drawn on the frame buffer Y-plane.
      */
     
-    // 11.创建视频纹理缓冲区
-    if (!_videoTextureCache) {
-        CVReturn err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, _context, NULL, &_videoTextureCache);
-        if (err != noErr) {
-            NSLog(@"Error at CVOpenGLESTextureCacheCreate %d", err);
-            return;
-        }
-    }
-    [self cleanUpTextures];
+    CVOpenGLESTextureCacheRef _videoTextureCache;
     
     // Create CVOpenGLESTextureCacheRef for optimal CVPixelBufferRef to GLES texture conversion.
     err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault, NULL, _context, NULL, &_videoTextureCache);
@@ -297,6 +287,10 @@ static const GLfloat kColorConversion709[] = {
     [self cleanUpTextures];
     // Periodic texture cache flush every frame
     CVOpenGLESTextureCacheFlush(_videoTextureCache, 0);
+    
+    if(_videoTextureCache) {
+        CFRelease(_videoTextureCache);
+    }
 }
 
 # pragma mark - OpenGL setup
@@ -386,9 +380,6 @@ static const GLfloat kColorConversion709[] = {
         CFRelease(_chromaTexture);
         _chromaTexture = NULL;
     }
-    
-    // Periodic texture cache flush every frame
-    CVOpenGLESTextureCacheFlush(_videoTextureCache, 0);
 }
 
 #pragma mark -  OpenGL ES 2 shader compilation
@@ -598,10 +589,6 @@ const GLchar *shader_vsh = (const GLchar*)"attribute vec4 position;"
         _context = nil;
     }
     //[super dealloc];
-    if(_videoTextureCache) {
-        CFRelease(_videoTextureCache);
-    }
 }
 
 @end
-
