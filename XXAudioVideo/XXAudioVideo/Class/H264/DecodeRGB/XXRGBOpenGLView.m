@@ -28,7 +28,6 @@ unsigned int indices[] = {
 
 @interface XXRGBOpenGLView()
 {
-    CAEAGLLayer *_eaglLayer;    //提供了一个OpenGLES渲染环境
     EAGLContext *_context;      //渲染上下文，管理所有使用OpenGL ES 进行描绘的状态、命令以及资源信息
     GLuint _colorRenderBuffer;  //颜色渲染缓存
     GLuint _frameBuffer;        //帧缓存
@@ -108,14 +107,14 @@ unsigned int indices[] = {
 
 #pragma mark- Setup
 - (void) setupLayer{
-    _eaglLayer = (CAEAGLLayer*)self.layer;
-    _eaglLayer.opaque = YES;                //默认透明,不透明度是
+    CAEAGLLayer *layer = (CAEAGLLayer*)self.layer;
+    layer.opaque = YES;                //默认透明,不透明度是
     
     //kEAGLDrawablePropertyRetainedBacking:表示是否要保持呈现的内容不变，默认为NO
     //设置描绘属性，在这里设置不维持渲染内容以及颜色格式为 RGBA8
-    _eaglLayer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@(NO),
-                                      kEAGLDrawablePropertyColorFormat:kEAGLColorFormatRGBA8
-                                      };
+    layer.drawableProperties = @{kEAGLDrawablePropertyRetainedBacking:@(NO),
+                                 kEAGLDrawablePropertyColorFormat:kEAGLColorFormatRGBA8
+                                 };
 }
 
 - (void) setupContext{
@@ -138,7 +137,7 @@ unsigned int indices[] = {
     glGenRenderbuffers(1, &_colorRenderBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, _colorRenderBuffer);
     //为color分配存储空间
-    [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:_eaglLayer];
+    [_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:(CAEAGLLayer*)self.layer];
 }
 
 - (void) setupFrameBuffer{
