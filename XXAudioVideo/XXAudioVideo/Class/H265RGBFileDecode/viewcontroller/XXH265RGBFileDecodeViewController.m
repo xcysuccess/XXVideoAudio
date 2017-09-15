@@ -17,6 +17,9 @@
 #import "H265RGBDecoderImpl.h"
 #import "XXRGBOpenGLView.h"
 #include "pthread.h"
+#import "XXImageTool.h"
+
+#define USE_SYSTEM_SHOWSCREEN (1)
 
 @interface XXH265RGBFileDecodeViewController ()<AVCaptureVideoDataOutputSampleBufferDelegate,H265RGBHwDecoderImplDelegate,XXFileDecodeViewDelegate>
 {
@@ -24,6 +27,9 @@
     H265RGBDecoderImpl *_h265RGBDecoder;
     XXRGBOpenGLView *_playLayer;
     VideoFileParser *_fileParser;
+#if USE_SYSTEM_SHOWSCREEN
+    UIImageView *_displayImageView;
+#endif
 }
 @property (nonatomic,strong) NSThread  *encodeThread;
 @property (assign, nonatomic) pthread_mutex_t lockThread;
@@ -54,6 +60,12 @@
     _playLayer = [[XXRGBOpenGLView alloc] initWithFrame:self.view.bounds];
     _playLayer.backgroundColor = [UIColor blackColor];
     [self.view addSubview:_playLayer];
+
+#if USE_SYSTEM_SHOWSCREEN
+    _displayImageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    _displayImageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.view addSubview:_displayImageView];
+#endif
     
     [self.view bringSubviewToFront:_beautyMenuView];
 }
@@ -71,12 +83,26 @@
 #pragma mark -  H264解码回调  H264HwDecoderImplDelegate delegare
 - (void)displayDecodedFrame:(CVImageBufferRef )imageBuffer
 {
+#if USE_SYSTEM_SHOWSCREEN
+
+    CIImage *ciImage = [CIImage imageWithCVPixelBuffer:imageBuffer];
+    UIImage *image= [UIImage imageWithCIImage:ciImage];//:newImage scale:1.0  orientation:UIImageOrientationRight];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _displayImageView.image = image;
+    });
+    CVPixelBufferRelease(imageBuffer);
+#else
     if(imageBuffer)
     {
         NSLog(@"testtest::tomxiangh265!");
         _playLayer.pixelBuffer = imageBuffer;
         CVPixelBufferRelease(imageBuffer);
     }
+#endif
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//        [XXImageTool writePixelBufferToLocalFile:imageBuffer];
+//    });
 }
 
 - (void)startDecodeButtonClick{

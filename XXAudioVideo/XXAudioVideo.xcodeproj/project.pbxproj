@@ -14,6 +14,7 @@
 		9A76039F1F2B1CE000CAA2E3 /* sintel.mov in Resources */ = {isa = PBXBuildFile; fileRef = 9A76039E1F2B1CDF00CAA2E3 /* sintel.mov */; };
 		9A78FA1E1F6B6BA800EFE3C2 /* H265RGBDecoderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A78FA1D1F6B6BA800EFE3C2 /* H265RGBDecoderImpl.m */; };
 		9A78FA231F6B6CB900EFE3C2 /* XXH265RGBFileDecodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A78FA221F6B6CB900EFE3C2 /* XXH265RGBFileDecodeViewController.m */; };
+		9A78FA2C1F6BAE3A00EFE3C2 /* XXImageTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A78FA2B1F6BAE3A00EFE3C2 /* XXImageTool.m */; };
 		9A9589F11F21AD31006ABF63 /* AACHwEncoderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A9589F01F21AD31006ABF63 /* AACHwEncoderImpl.m */; };
 		9A95C0311F04F77B00BB1662 /* LAScreenEx.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A95C0301F04F77B00BB1662 /* LAScreenEx.m */; };
 		9AA3919D1F00A6B300F96402 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AA3919C1F00A6B300F96402 /* main.m */; };
@@ -300,6 +301,8 @@
 		9A78FA1D1F6B6BA800EFE3C2 /* H265RGBDecoderImpl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = H265RGBDecoderImpl.m; sourceTree = "<group>"; };
 		9A78FA211F6B6CB900EFE3C2 /* XXH265RGBFileDecodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XXH265RGBFileDecodeViewController.h; sourceTree = "<group>"; };
 		9A78FA221F6B6CB900EFE3C2 /* XXH265RGBFileDecodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XXH265RGBFileDecodeViewController.m; sourceTree = "<group>"; };
+		9A78FA2A1F6BAE3A00EFE3C2 /* XXImageTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XXImageTool.h; sourceTree = "<group>"; };
+		9A78FA2B1F6BAE3A00EFE3C2 /* XXImageTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XXImageTool.m; sourceTree = "<group>"; };
 		9A9589E41F219595006ABF63 /* x264.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = x264.h; sourceTree = "<group>"; };
 		9A9589E51F219595006ABF63 /* x264_config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = x264_config.h; sourceTree = "<group>"; };
 		9A9589E71F219595006ABF63 /* libx264.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libx264.a; sourceTree = "<group>"; };
@@ -992,6 +995,23 @@
 				9A78FA221F6B6CB900EFE3C2 /* XXH265RGBFileDecodeViewController.m */,
 			);
 			path = viewcontroller;
+			sourceTree = "<group>";
+		};
+		9A78FA281F6BAE0300EFE3C2 /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				9A78FA291F6BAE1000EFE3C2 /* ImageTool */,
+			);
+			path = Tool;
+			sourceTree = "<group>";
+		};
+		9A78FA291F6BAE1000EFE3C2 /* ImageTool */ = {
+			isa = PBXGroup;
+			children = (
+				9A78FA2A1F6BAE3A00EFE3C2 /* XXImageTool.h */,
+				9A78FA2B1F6BAE3A00EFE3C2 /* XXImageTool.m */,
+			);
+			path = ImageTool;
 			sourceTree = "<group>";
 		};
 		9A9589E21F219595006ABF63 /* x264-iOS */ = {
@@ -2104,6 +2124,7 @@
 		9AF83D331F00ACD200F8D43E /* Class */ = {
 			isa = PBXGroup;
 			children = (
+				9A78FA281F6BAE0300EFE3C2 /* Tool */,
 				9AF012491F49B32F003C0453 /* AAC */,
 				9AAC54D31F025299005C2053 /* H264 */,
 				9AADC8B81F0DD0B800610C0A /* H265 */,
@@ -2366,6 +2387,7 @@
 				9AF012391F49B0F2003C0453 /* XXManagerCore.m in Sources */,
 				9AF83EE41F00AD5000F8D43E /* ViewController.m in Sources */,
 				9AA3964D1F00B3D100F96402 /* GPUImageTiltShiftFilter.m in Sources */,
+				9A78FA2C1F6BAE3A00EFE3C2 /* XXImageTool.m in Sources */,
 				9AA396141F00B3D100F96402 /* GPUImageMosaicFilter.m in Sources */,
 				9AA394421F00ADE800F96402 /* MASConstraintMaker.m in Sources */,
 				9AA396341F00B3D100F96402 /* GPUImageScreenBlendFilter.m in Sources */,

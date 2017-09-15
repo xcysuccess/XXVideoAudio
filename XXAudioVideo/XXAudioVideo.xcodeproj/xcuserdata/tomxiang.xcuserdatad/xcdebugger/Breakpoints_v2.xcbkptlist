@@ -460,7 +460,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "XXAudioVideo/Class/H265/Decode/H265HwDecoderImpl.m"
-            timestampString = "527135659.811699"
+            timestampString = "527137956.889551"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "223"
@@ -477,6 +477,22 @@
             continueAfterRunningActions = "No"
             scope = "0"
             stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "XXAudioVideo/Class/Tool/ImageTool/XXImageTool.m"
+            timestampString = "527156335.149093"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "+writePixelBufferToLocalFile:"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
