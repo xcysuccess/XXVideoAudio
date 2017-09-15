@@ -14,7 +14,7 @@
 #import "XXFFmpegDecoderViewController.h"
 #import "XXH265FileDecodeViewController.h"
 #import "XXH264RGBFileDecodeViewController.h"
-
+#import "XXH265RGBFileDecodeViewController.h"
 #import "LAScreenEx.h"
 
 #define BASECELLIDENDIFIFY @"BASE_CELL_IDENDIFIFY"
@@ -32,11 +32,12 @@
     NSMutableArray *array = [[NSMutableArray alloc] initWithObjects:
                              @"H264硬件-实时编解码",
                              @"H264硬件-文件解码显示",
-                             @"H265硬件-编解码",
+                             @"H265硬件-编码写文件",
                              @"H264FFmpeg-纯净版格式转换保存本地",
                              @"H264FFmpeg-解码保存与显示",
                              @"H265硬件-解码文件显示",
-                             @"H264硬解-RGB格式并上屏",nil];
+                             @"H264硬解-RGB格式并上屏",
+                             @"H265硬解-RGB格式并上屏",nil];
     self.listArray = array;
     
 }
@@ -123,6 +124,9 @@
             viewController = [[XXH264RGBFileDecodeViewController alloc] init];
         }
             break;
+        case 7:{
+            viewController = [[XXH265RGBFileDecodeViewController alloc] init];
+        }
         default:
             break;
     }
