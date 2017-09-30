@@ -105,8 +105,8 @@
                                                            //硬解必须是 kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
                                                            //                                                           或者是kCVPixelFormatType_420YpCbCr8Planar
                                                            //因为iOS是  nv12  其他是nv21
-                                                           (id)kCVPixelBufferWidthKey : @([LASessionSize sharedInstance].h264outputWidth),
-                                                           (id)kCVPixelBufferHeightKey : @([LASessionSize sharedInstance].h264outputHeight),
+//                                                           (id)kCVPixelBufferWidthKey : @([LASessionSize sharedInstance].h264outputWidth),
+//                                                           (id)kCVPixelBufferHeightKey : @([LASessionSize sharedInstance].h264outputHeight),
                                                            //这里款高和编码反的
                                                            (id)kCVPixelBufferOpenGLCompatibilityKey : [NSNumber numberWithBool:YES]
                                                            };

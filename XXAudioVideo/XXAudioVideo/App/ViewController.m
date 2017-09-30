@@ -15,6 +15,7 @@
 #import "XXH265FileDecodeViewController.h"
 #import "XXH264RGBFileDecodeViewController.h"
 #import "XXH265RGBFileDecodeViewController.h"
+#import "XXFFmpegHwFileDcodeViewController.h"
 #import "LAScreenEx.h"
 
 #define BASECELLIDENDIFIFY @"BASE_CELL_IDENDIFIFY"
@@ -37,7 +38,8 @@
                              @"H264FFmpeg-解码保存与显示",
                              @"H265硬件-解码文件显示",
                              @"H264硬解-RGB格式并上屏",
-                             @"H265硬解-RGB格式并上屏",nil];
+                             @"H265硬解-RGB格式并上屏",
+                             @"H265硬解-FFmpeg读取上屏",nil];
     self.listArray = array;
     
 }
@@ -127,6 +129,11 @@
         case 7:{
             viewController = [[XXH265RGBFileDecodeViewController alloc] init];
         }
+            break;
+        case 8:{
+            viewController = [[XXFFmpegHwFileDcodeViewController alloc] init];
+        }
+            break;
         default:
             break;
     }

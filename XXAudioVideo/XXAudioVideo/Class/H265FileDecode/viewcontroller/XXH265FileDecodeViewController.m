@@ -82,7 +82,7 @@
         return;
     }
     
-    NSString *h265FileSavePath = [[NSBundle mainBundle] pathForResource:@"testh265" ofType:@"hevc"];
+    NSString *h265FileSavePath = [[NSBundle mainBundle] pathForResource:@"h265" ofType:@"hevc"];
     _fileParser = [VideoFileParser alloc];
     [_fileParser open:h265FileSavePath];
     
