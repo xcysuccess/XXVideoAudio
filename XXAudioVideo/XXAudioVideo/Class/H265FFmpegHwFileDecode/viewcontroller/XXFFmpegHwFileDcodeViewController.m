@@ -74,7 +74,7 @@
 }
 
 - (void)startDecodeButtonClick{
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"outputH265File" ofType:@"hevc"];
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"h265" ofType:@"mov"];
     [_h265DecoderHw decoderFile:filePath];
 
 }
