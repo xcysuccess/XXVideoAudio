@@ -149,6 +149,7 @@ static void DecompressionOutputCallback(void *  decompressionOutputRefCon,
 
     H265FFmpegRGBDecoderImpl *decoder = (__bridge H265FFmpegRGBDecoderImpl *)decompressionOutputRefCon;
     if (decoder.delegate!=nil){
+        NSLog(@"presentationTimeStampValue:%f",CMTimeGetSeconds(presentationTimeStamp));
         [decoder.delegate displayH265DecodedFrame:pixelBuffer];
     }
 }
@@ -236,41 +237,56 @@ static void DecompressionOutputCallback(void *  decompressionOutputRefCon,
                                                           avPacket->size,
                                                           FALSE,
                                                           &blockBuffer);
-    
-    if(status == kCMBlockBufferNoErr) {
-        CMSampleBufferRef sampleBuffer = NULL;
-        const size_t sampleSizeArray[] = {avPacket->size};
-        status = CMSampleBufferCreateReady(kCFAllocatorDefault,
-                                           blockBuffer,
-                                           description ,
-                                           1,
-                                           0,
-                                           NULL,
-                                           1,
-                                           sampleSizeArray,
-                                           &sampleBuffer);
-        if (status == kCMBlockBufferNoErr && sampleBuffer) {
-            VTDecodeFrameFlags flags = kVTDecodeFrame_EnableTemporalProcessing;
-            VTDecodeInfoFlags flagOut = 0;
-            
-            OSStatus decodeStatus = VTDecompressionSessionDecodeFrame(session,
-                                                                      sampleBuffer,
-                                                                      flags,
-                                                                      NULL,
-                                                                      &flagOut);
-            VTDecompressionSessionWaitForAsynchronousFrames(session);
-            
-            if(decodeStatus == kVTInvalidSessionErr) {
-                NSLog(@"IOS8VT: Invalid session, reset decoder session");
-            } else if(decodeStatus == kVTVideoDecoderBadDataErr) {
-                NSLog(@"IOS8VT: decode failed status=%d(Bad data)", (int)decodeStatus);
-            } else if(decodeStatus != noErr) {
-                NSLog(@"IOS8VT: decode failed status=%d", (int)decodeStatus);
-            }
-            CFRelease(sampleBuffer);
-        }
+    if (status != kCMBlockBufferNoErr) {
         CFRelease(blockBuffer);
+        return;
     }
+    
+
+    CMSampleBufferRef sampleBuffer = NULL;
+    size_t dataLen = avPacket->size;
+    const size_t sampleSize = dataLen;
+    
+    CMSampleTimingInfo timingInfo;
+    timingInfo.presentationTimeStamp = CMTimeMakeWithSeconds(avPacket->pts, 100000000);
+    timingInfo.duration =  CMTimeMakeWithSeconds(avPacket->duration, 100000000);
+    timingInfo.decodeTimeStamp = CMTimeMakeWithSeconds(avPacket->dts, 100000000);
+    
+    status = CMSampleBufferCreate(kCFAllocatorDefault,
+                                  blockBuffer,
+                                  true,
+                                  NULL,
+                                  NULL,
+                                  description,
+                                  1,
+                                  1,
+                                  &timingInfo,
+                                  1,
+                                  &sampleSize,
+                                  &sampleBuffer);
+    
+    if (status == kCMBlockBufferNoErr && sampleBuffer) {
+        VTDecodeFrameFlags flags = kVTDecodeFrame_EnableTemporalProcessing;
+        VTDecodeInfoFlags flagOut = 0;
+        
+        OSStatus decodeStatus = VTDecompressionSessionDecodeFrame(session,
+                                                                  sampleBuffer,
+                                                                  flags,
+                                                                  NULL,
+                                                                  &flagOut);
+        VTDecompressionSessionWaitForAsynchronousFrames(session);
+        
+        if(decodeStatus == kVTInvalidSessionErr) {
+            NSLog(@"IOS8VT: Invalid session, reset decoder session");
+        } else if(decodeStatus == kVTVideoDecoderBadDataErr) {
+            NSLog(@"IOS8VT: decode failed status=%d(Bad data)", (int)decodeStatus);
+        } else if(decodeStatus != noErr) {
+            NSLog(@"IOS8VT: decode failed status=%d", (int)decodeStatus);
+        }
+        CFRelease(sampleBuffer);
+    }
+    CFRelease(blockBuffer);
+    
 }
 
 @end

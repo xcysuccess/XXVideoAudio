@@ -112,8 +112,8 @@ static void didDecompress( void *decompressionOutputRefCon, void *sourceFrameRef
     CVPixelBufferRef *outputPixelBuffer = (CVPixelBufferRef *)sourceFrameRefCon;
     *outputPixelBuffer = CVPixelBufferRetain(pixelBuffer);
     H264RGBDecoderImpl *decoder = (__bridge H264RGBDecoderImpl *)decompressionOutputRefCon;
-    if (decoder.delegate!=nil)
-    {
+    if (decoder.delegate!=nil){
+        NSLog(@"presentationTimeStampValue:%f",CMTimeGetSeconds(presentationTimeStamp));
         [decoder.delegate displayDecodedFrame:pixelBuffer];
     }
     
@@ -134,16 +134,18 @@ static void didDecompress( void *decompressionOutputRefCon, void *sourceFrameRef
                                                           &blockBuffer);
     if(status == kCMBlockBufferNoErr) {
         CMSampleBufferRef sampleBuffer = NULL;
-        const size_t sampleSizeArray[] = {nalUnit.size};
-        status = CMSampleBufferCreateReady(kCFAllocatorDefault,
-                                           blockBuffer,
-                                           _decoderFormatDescription ,
-                                           1,
-                                           0,
-                                           NULL,
-                                           1,
-                                           sampleSizeArray,
-                                           &sampleBuffer);
+//        const size_t sampleSizeArray[] = {nalUnit.size};
+//        status = CMSampleBufferCreateReady(kCFAllocatorDefault,
+//                                           blockBuffer,
+//                                           _decoderFormatDescription ,
+//                                           1,
+//                                           0,
+//                                           NULL,
+//                                           1,
+//                                           sampleSizeArray,
+//                                           &sampleBuffer);
+        status = CMSampleBufferCreate(NULL, blockBuffer, TRUE, 0, 0, _decoderFormatDescription, 1, 0, NULL, 0, NULL, &sampleBuffer);
+
         if (status == kCMBlockBufferNoErr && sampleBuffer) {
             VTDecodeFrameFlags flags = 0;
             VTDecodeInfoFlags flagOut = 0;

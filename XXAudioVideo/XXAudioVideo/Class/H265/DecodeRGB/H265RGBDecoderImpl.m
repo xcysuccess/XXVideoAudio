@@ -137,6 +137,7 @@ static void didDecompress( void *decompressionOutputRefCon, void *sourceFrameRef
     *outputPixelBuffer = CVPixelBufferRetain(pixelBuffer);
     H265HwDecoderImpl *decoder = (__bridge H265HwDecoderImpl *)decompressionOutputRefCon;
     if (decoder.delegate!=nil){
+        NSLog(@"presentationTimeStampValue:%lld",CMTimeGetSeconds(presentationTimeStamp));
         [decoder.delegate displayDecodedFrame:pixelBuffer];
     }
 }
@@ -156,16 +157,18 @@ static void didDecompress( void *decompressionOutputRefCon, void *sourceFrameRef
                                                           &blockBuffer);
     if(status == kCMBlockBufferNoErr) {
         CMSampleBufferRef sampleBuffer = NULL;
-        const size_t sampleSizeArray[] = {nalUnit.size};
-        status = CMSampleBufferCreateReady(kCFAllocatorDefault,
-                                           blockBuffer,
-                                           _decoderFormatDescription ,
-                                           1,
-                                           0,
-                                           NULL,
-                                           1,
-                                           sampleSizeArray,
-                                           &sampleBuffer);
+//        const size_t sampleSizeArray[] = {nalUnit.size};
+//        status = CMSampleBufferCreateReady(kCFAllocatorDefault,
+//                                           blockBuffer,
+//                                           _decoderFormatDescription ,
+//                                           1,
+//                                           0,
+//                                           NULL,
+//                                           1,
+//                                           sampleSizeArray,
+//                                           &sampleBuffer);
+        status = CMSampleBufferCreate(NULL, blockBuffer, TRUE, 0, 0, _decoderFormatDescription, 1, 0, NULL, 0, NULL, &sampleBuffer);
+
         if (status == kCMBlockBufferNoErr && sampleBuffer) {
             VTDecodeFrameFlags flags = kVTDecodeFrame_EnableTemporalProcessing;
             VTDecodeInfoFlags flagOut = 0;
