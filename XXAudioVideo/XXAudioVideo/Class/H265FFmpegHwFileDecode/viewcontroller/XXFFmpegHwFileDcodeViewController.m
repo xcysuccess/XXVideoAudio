@@ -15,13 +15,13 @@
 #import "LASessionSize.h"
 #import "H265HwDecoderImpl.h"
 #import "AAPLEAGLLayer.h"
-#include "H265FFmpegRGBDecoderImpl.h"
+#import "FileFFmpegRemuxTool.h"
 
 
 @interface XXFFmpegHwFileDcodeViewController()<AVCaptureVideoDataOutputSampleBufferDelegate,H265FFmpegRGBDecoderImplDelegate,XXFileDecodeViewDelegate>
 {
     XXFileDecodeView   *_beautyMenuView;
-    H265FFmpegRGBDecoderImpl *_h265DecoderHw;
+    FileFFmpegRemuxTool *_fileFFmpegRemuxTool;
     AAPLEAGLLayer *_playLayer;
 }
 
@@ -55,9 +55,9 @@
 }
 
 - (void) initData{
-    if (!_h265DecoderHw) {
-        _h265DecoderHw = [[H265FFmpegRGBDecoderImpl alloc] init];
-        _h265DecoderHw.delegate = self;
+    if (!_fileFFmpegRemuxTool) {
+        _fileFFmpegRemuxTool = [[FileFFmpegRemuxTool alloc] init];
+        _fileFFmpegRemuxTool.delegate = self;
     }    
 }
 
@@ -74,8 +74,8 @@
 }
 
 - (void)startDecodeButtonClick{
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"h265" ofType:@"mov"];
-    [_h265DecoderHw decoderFile:filePath];
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"h265_aac" ofType:@"mov"];
+    [_fileFFmpegRemuxTool decoderFile:filePath];
 
 }
 
