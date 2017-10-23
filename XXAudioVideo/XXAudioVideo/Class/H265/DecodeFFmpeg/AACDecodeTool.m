@@ -27,7 +27,10 @@
 
     bool _inuse[kNumberOfBuffers];                                       //标记当前AudioQueueBuffer是否在使用中
     
-    NSLock *audioInUseLock;                                              //修改使用标记的锁
+    NSLock *_audioInUseLock;                                             //修改使用标记的锁
+    
+    bool _playStarted;                   //播放是否已经启动
+    bool _queueStarted;                  //线程是否已经启动
 }
 
 @end
@@ -36,13 +39,44 @@
 
 
 #pragma mark - AudioStream Listeners
+//当一个缓冲区使用结束之后，AudioQueue将会调用之前由AudioQueueNewOutput设置的回调函数
 static void XXAudioQueueOutputCallback(void* inClientData,
                                        AudioQueueRef inAQ,
                                        AudioQueueBufferRef inBuffer){
     
+    AACDecodeTool* decodeTool = (__bridge AACDecodeTool*)inClientData;
+
+    for (unsigned int i = 0; i < kNumberOfBuffers; ++i) {
+        if (inBuffer == decodeTool->_audioQueueBuffer[i]){
+            [decodeTool->_audioInUseLock lock];
+            decodeTool->_inuse[i] = NO;
+            [decodeTool->_audioInUseLock unlock];
+        }
+    }
+}
+
+//当AudioQueue启动或者是终止的时候
+static void XXAudioQueueIsRunningCallback(void *inClientData,
+                                          AudioQueueRef inAQ,
+                                          AudioQueuePropertyID inID) {
+    AACDecodeTool* decodeTool = (__bridge AACDecodeTool*)inClientData;
+    UInt32 isRunning, ioDataSize = sizeof(isRunning);
+    OSStatus error = AudioQueueGetProperty(inAQ, kAudioQueueProperty_IsRunning, &isRunning, &ioDataSize);
+    if (error) {
+        NSLog(@"get kAudioQueueProperty Is Running");
+        return;
+    };
+    
+    if (!isRunning) {
+        decodeTool->_playStarted = NO;
+        decodeTool->_queueStarted = NO;
+        NSLog(@"Audio Queue stopped");
+    }
+    decodeTool->_playStarted = YES;
 }
 
 //信息解析的回调，每解析出一帧数据都会进行一次回调；
+//时长 = (音频数据字节大小 * 8) / 采样率 = (kAudioFileStreamProperty_AudioDataByteCount * 8)/kAudioFileStreamProperty_BitRate
 static void XXAudioFileStream_PropertyListenerProc(void *                     inClientData,
                                                    AudioFileStreamID          inAudioFileStream,
                                                    AudioFileStreamPropertyID  inPropertyID,
@@ -66,10 +100,10 @@ static void XXAudioFileStream_PropertyListenerProc(void *                     in
             }
         }
             break;
-        case kAudioFileStreamProperty_ReadyToProducePackets:{
+        case kAudioFileStreamProperty_ReadyToProducePackets:{//已经解析到完整的音频帧数据，准备产生音频帧
             //1.首先创建一个音频队列，用以播放音频，并为每个缓冲区分配空间
             error = AudioQueueNewOutput(&decodeTool->_dataFormat,
-                                        XXAudioQueueOutputCallback,
+                                        XXAudioQueueOutputCallback,//该回调用于当AudioQueue已使用完一个缓冲区时通知用户，用户可以继续填充音频数据
                                         (__bridge void * _Nullable)(decodeTool),
                                         NULL,
                                         NULL,
@@ -90,7 +124,7 @@ static void XXAudioFileStream_PropertyListenerProc(void *                     in
             
             //2.监听kAudioQueue
             error = AudioQueueAddPropertyListener(decodeTool->_audioQueue,
-                                                  kAudioQueueProperty_IsRunning,
+                                                  kAudioQueueProperty_IsRunning,//当AudioQueue启动或者是终止的时候
                                                   XXAudioQueueIsRunningCallback,
                                                   decodeTool);
         }
@@ -132,11 +166,13 @@ static void XXAudioStreamPacketsProc(void *                          inClientDat
 
 -(instancetype)init{
     if(self = [super init]){
-
-        
+        _audioInUseLock = [[NSLock alloc] init];
+        _playStarted = NO;
+        _queueStarted = NO;
     }
     return self;
 }
+
 -(void) setParameters:(AVCodecParameters*) parameters{
     return;
 }
