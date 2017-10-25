@@ -27,22 +27,88 @@
     AudioStreamPacketDescription _packetDescs[kAQMaxPacketDescs];        //最大的AudioStreamPacketDescription的个数
     AudioQueueRef _audioQueue;                                           //音频队列
 
+    unsigned int _fillBufferIndex;        // the index of the audioQueueBuffer that is being filled
     UInt32 _bytesFilled;                  // how many bytes have been filled
-    
+    UInt32 _packetsFilled;                // how many packets have been filled
+
     bool _inuse[kNumberOfBuffers];                                       //标记当前AudioQueueBuffer是否在使用中
     
     bool _playStarted;                   //播放是否已经启动
     bool _queueStarted;                  //线程是否已经启动
     
-    pthread_mutex_t mutex;              // a mutex to protect the inuse flags
-    pthread_cond_t cond;                // a condition varable for handling the inuse flags
-    pthread_cond_t done;                // a condition varable for handling the inuse flags
+    pthread_mutex_t _mutex;              // a mutex to protect the inuse flags
+    pthread_cond_t _cond;                // a condition varable for handling the inuse flags
+    pthread_cond_t _done;                // a condition varable for handling the inuse flags
 }
 
 @end
 
 @implementation AACDecodeTool
 
+#pragma mark- 初始化
+-(instancetype)init{
+    if(self = [super init]){
+        _playStarted = NO;
+        _queueStarted = NO;
+        _fillBufferIndex = 0;
+        
+        // initialize a mutex and condition so that we can block on buffers in use.
+        pthread_mutex_init(&_mutex, NULL);
+        pthread_cond_init(&_cond, NULL);
+        pthread_cond_init(&_done, NULL);
+    }
+    return self;
+}
+
+-(void) setParameters:(AVCodecParameters*) parameters{
+    return;
+}
+-(void) start{
+    if (!self->_playStarted) {
+        [self reset];
+        //1.初始化AudioFileStream
+        OSStatus status = AudioFileStreamOpen((__bridge void * _Nullable)(self),
+                                              XXAudioFileStream_PropertyListenerProc,//当解析到一个音频信息时，将回调该方法
+                                              XXAudioStreamPacketsProc,              //当解析到一个音频帧时，将回调该方法
+                                              kAudioFileAAC_ADTSType,                //指明音频数据的格式，如果你不知道音频数据的格式，可以传0
+                                              &_audioFileStreamID);
+        if (status) {
+            NSLog(@"AudioFileStreamOpen fail");
+        } else {
+            self->_playStarted = true;
+        }
+    }
+}
+-(void) hwDecodePacket:(AVPacket*) avPacket{
+    [self start];
+    //2.解析数据
+    if (avPacket == NULL || avPacket->data == NULL)
+        return;
+    
+    NSLog(@"Recieve packet");
+    OSStatus status = AudioFileStreamParseBytes(_audioFileStreamID,
+                                                avPacket->size,
+                                                avPacket->data,
+                                                0);//本次的解析和上一次解析是否是连续的关系，如果是连续的传入0，否则传入kAudioFileStreamParseFlag_Discontinuity。
+    if (status != noErr) {
+        NSLog(@"AudioFileStreamParseBytes fail");
+        return;
+    }
+}
+-(void) reset{
+    _audioQueue = NULL;
+    memset(_audioQueueBuffer, 0x0, sizeof(_audioQueueBuffer)/sizeof(_audioQueueBuffer[0]));
+    memset(_packetDescs, 0x0, sizeof(_packetDescs)/sizeof(_packetDescs[0]));
+    _fillBufferIndex = 0;
+    _bytesFilled = 0;
+    _packetsFilled = 0;
+    memset(_inuse, 0x0, sizeof(_inuse)/sizeof(_inuse[0]));
+    _playStarted = false;
+    _queueStarted = false;
+    pthread_mutex_init(&_mutex, NULL);
+    pthread_cond_init(&_cond, NULL);
+    pthread_cond_init(&_done, NULL);
+}
 
 #pragma mark- AudioStream Listeners
 //当一个缓冲区使用结束之后，AudioQueue将会调用之前由AudioQueueNewOutput设置的回调函数
@@ -54,10 +120,10 @@ static void XXAudioQueueOutputCallback(void* inClientData,
 
     for (unsigned int i = 0; i < kNumberOfBuffers; ++i) {
         if (inBuffer == decodeTool->_audioQueueBuffer[i]){
-            pthread_mutex_lock(&decodeTool->mutex);
+            pthread_mutex_lock(&decodeTool->_mutex);
             decodeTool->_inuse[i] = NO;
-            pthread_cond_signal(&decodeTool->cond);
-            pthread_mutex_unlock(&decodeTool->mutex);
+            pthread_cond_signal(&decodeTool->_cond);
+            pthread_mutex_unlock(&decodeTool->_mutex);
         }
     }
 }
@@ -153,7 +219,7 @@ static void XXAudioFileStream_PropertyListenerProc(void *                     in
             error = AudioQueueSetProperty(decodeTool->_audioQueue, kAudioQueueProperty_MagicCookie, cookieData, cookieSize);
             free(cookieData);
             if (error) {
-                NSLog(@"Set magic data failed");
+                NSLog(@"[Audio]:Set magic data failed");
                 break;
             }
         }
@@ -182,102 +248,79 @@ static void XXAudioStreamPacketsProc(void *                          inClientDat
         //如果当前要填充缓冲区的大小的数据 大于 缓冲区的剩余大小
         //将当前未满的Buffer送进播放队列，指示当前帧放入到下一个Buffer
         if (packetSize > bufSpaceRemaining) {
-            XXEnqueueBuffer(myData);
-            XXWaitForFreeBuffer(myData);
+            XXEnqueueBuffer(decodeTool);
+            XXWaitForFreeBuffer(decodeTool);
         }
         
         // copy data to the audio queue buffer
-        AudioQueueBufferRef fillBuf = _decodeTool->_audioQueueBuffer[_decodeTool->fillBufferIndex];
+        AudioQueueBufferRef fillBuf = decodeTool->_audioQueueBuffer[decodeTool->_fillBufferIndex];
         memcpy((char*)fillBuf->mAudioData + decodeTool->_bytesFilled, (const char*)inInputData + packetOffset, packetSize);
         // fill out packet description
-        decodeTool->packetDescs[myData->packetsFilled] = inPacketDescriptions[i];
-        decodeTool->packetDescs[myData->packetsFilled].mStartOffset = myData->bytesFilled;
+        decodeTool->_packetDescs[decodeTool->_packetsFilled] = inPacketDescriptions[i];
+        decodeTool->_packetDescs[decodeTool->_packetsFilled].mStartOffset = decodeTool->_bytesFilled;
         // keep track of bytes filled and packets filled
-        decodeTool->bytesFilled += packetSize;
-        decodeTool->packetsFilled += 1;
-        
+        decodeTool->_bytesFilled += packetSize;
+        decodeTool->_packetsFilled += 1;
+
         // if that was the last free packet description, then enqueue the buffer.
-        size_t packetsDescsRemaining = kAQMaxPacketDescs - myData->packetsFilled;
+        size_t packetsDescsRemaining = kAQMaxPacketDescs - decodeTool->_packetsFilled;
         if (packetsDescsRemaining == 0) {
-            MyEnqueueBuffer(myData);
-            WaitForFreeBuffer(myData);
+            XXEnqueueBuffer(decodeTool);
+            XXWaitForFreeBuffer(decodeTool);
         }
     }
 }
 
-OSStatus MyEnqueueBuffer(AACDecodeTool *decodeTool)
+static OSStatus XXStartQueueIfNeeded(AACDecodeTool *decodeTool)
 {
     OSStatus err = noErr;
-    myData->inuse[myData->fillBufferIndex] = true;        // set in use flag
+    if (!decodeTool->_queueStarted) {     // start the queue if it has not been started already
+        err = AudioQueueStart(decodeTool->_audioQueue, NULL);
+        if (err) {
+            NSLog(@"[Audio]:Start AudioQueue failed");
+            return err;
+        }
+        decodeTool->_queueStarted = true;
+        NSLog(@"[Audio]:AudioQueue started");
+    }
+    return err;
+}
+
+OSStatus XXEnqueueBuffer(AACDecodeTool *decodeTool)
+{
+    OSStatus err = noErr;
+    decodeTool->_inuse[decodeTool->_fillBufferIndex] = true;        // set in use flag
     
     // enqueue buffer
-    AudioQueueBufferRef fillBuf = myData->audioQueueBuffer[myData->fillBufferIndex];
-    fillBuf->mAudioDataByteSize = myData->bytesFilled;
-    err = AudioQueueEnqueueBuffer(myData->audioQueue, fillBuf, myData->packetsFilled, myData->packetDescs);
-    if (err) { PRINTERROR("AudioQueueEnqueueBuffer"); myData->failed = true; return err; }
+    AudioQueueBufferRef fillBuf = decodeTool->_audioQueueBuffer[decodeTool->_fillBufferIndex];
+    fillBuf->mAudioDataByteSize = decodeTool->_bytesFilled;
+    err = AudioQueueEnqueueBuffer(decodeTool->_audioQueue, fillBuf, decodeTool->_packetsFilled, decodeTool->_packetDescs);
+    if (err) { NSLog(@"AudioQueueEnqueueBuffer"); return err; }
     
-    StartQueueIfNeeded(myData);
+    XXStartQueueIfNeeded(decodeTool);
     
     return err;
 }
 
 
-void WaitForFreeBuffer(AACDecodeTool *decodeTool)
+void XXWaitForFreeBuffer(AACDecodeTool *decodeTool)
 {
     // go to next buffer
-    if (++myData->fillBufferIndex >= kNumAQBufs) myData->fillBufferIndex = 0;
-    myData->bytesFilled = 0;        // reset bytes filled
-    myData->packetsFilled = 0;        // reset packets filled
+    if (++decodeTool->_fillBufferIndex >= kNumberOfBuffers) decodeTool->_fillBufferIndex = 0;
+    decodeTool->_bytesFilled = 0;          // reset bytes filled
+    decodeTool->_packetsFilled = 0;        // reset packets filled
     
     // wait until next buffer is not in use
-    printf("->lock\n");
-    pthread_mutex_lock(&myData->mutex);
-    while (myData->inuse[myData->fillBufferIndex]) {
-        printf("... WAITING ...\n");
-        pthread_cond_wait(&myData->cond, &myData->mutex);
+    NSLog(@"[Audio]:->lock");
+    pthread_mutex_lock(&decodeTool->_mutex);
+    while (decodeTool->_inuse[decodeTool->_fillBufferIndex]) {
+        NSLog(@"[Audio]:... WAITING ...");
+        pthread_cond_wait(&decodeTool->_cond, &decodeTool->_mutex);
     }
-    pthread_mutex_unlock(&myData->mutex);
-    printf("<-unlock\n");
+    pthread_mutex_unlock(&decodeTool->_mutex);
+    NSLog(@"[Audio]:<-unlock");
 }
 
-#pragma mark- 初始化
--(instancetype)init{
-    if(self = [super init]){
-        _audioInUseLock = [[NSLock alloc] init];
-        _playStarted = NO;
-        _queueStarted = NO;
-    }
-    return self;
-}
-
--(void) setParameters:(AVCodecParameters*) parameters{
-    return;
-}
-
--(void) hwDecodePacket:(AVPacket*) avPacket{
-    if (_audioFileStreamID == NULL) {
-        //1.初始化AudioFileStream
-        AudioFileStreamOpen((__bridge void * _Nullable)(self),
-                            XXAudioFileStream_PropertyListenerProc,//当解析到一个音频信息时，将回调该方法
-                            XXAudioStreamPacketsProc,              //当解析到一个音频帧时，将回调该方法
-                            kAudioFileAAC_ADTSType,                //指明音频数据的格式，如果你不知道音频数据的格式，可以传0
-                            &_audioFileStreamID);
-    }
-    
-    //2.解析数据
-    if (avPacket == NULL || avPacket->data == NULL)
-        return;
-    
-    NSLog(@"Recieve packet");
-    OSStatus status = AudioFileStreamParseBytes(_audioFileStreamID,
-                                                avPacket->size,
-                                                avPacket->data,
-                                                0);//本次的解析和上一次解析是否是连续的关系，如果是连续的传入0，否则传入kAudioFileStreamParseFlag_Discontinuity。
-    if (status != noErr) {
-        NSLog(@"AudioFileStreamParseBytes fail");
-        return;
-    }
-}
 
 
 @end
