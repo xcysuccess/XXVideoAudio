@@ -137,7 +137,7 @@ static void didDecompress( void *decompressionOutputRefCon, void *sourceFrameRef
     *outputPixelBuffer = CVPixelBufferRetain(pixelBuffer);
     H265HwDecoderImpl *decoder = (__bridge H265HwDecoderImpl *)decompressionOutputRefCon;
     if (decoder.delegate!=nil){
-        NSLog(@"presentationTimeStampValue:%lld",CMTimeGetSeconds(presentationTimeStamp));
+        NSLog(@"presentationTimeStampValue:%f",CMTimeGetSeconds(presentationTimeStamp));
         [decoder.delegate displayDecodedFrame:pixelBuffer];
     }
 }

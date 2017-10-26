@@ -10,6 +10,7 @@
 		9A33A3631F4C20E300AAB8A3 /* H265HwDecoderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A33A3611F4C20E300AAB8A3 /* H265HwDecoderImpl.m */; };
 		9A33A3681F4C216C00AAB8A3 /* XXH265FileDecodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A33A3671F4C216C00AAB8A3 /* XXH265FileDecodeViewController.m */; };
 		9A33A36A1F4C5CEF00AAB8A3 /* h265.hevc in Resources */ = {isa = PBXBuildFile; fileRef = 9A33A3691F4C5CEF00AAB8A3 /* h265.hevc */; };
+		9A50A46E1FA20FD20059CAF0 /* AACAudioState.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A50A46D1FA20FD20059CAF0 /* AACAudioState.m */; };
 		9A7603871F288E7800CAA2E3 /* FFmpegTest.yuv in Resources */ = {isa = PBXBuildFile; fileRef = 9A7603861F288E7800CAA2E3 /* FFmpegTest.yuv */; };
 		9A76039F1F2B1CE000CAA2E3 /* sintel.mov in Resources */ = {isa = PBXBuildFile; fileRef = 9A76039E1F2B1CDF00CAA2E3 /* sintel.mov */; };
 		9A78FA1E1F6B6BA800EFE3C2 /* H265RGBDecoderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A78FA1D1F6B6BA800EFE3C2 /* H265RGBDecoderImpl.m */; };
@@ -248,7 +249,7 @@
 		9AB7DF021F0A1F5000AC3463 /* H264HwDecoderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB7DEF91F0A1EEB00AC3463 /* H264HwDecoderImpl.m */; };
 		9AB7DF031F0A1F5200AC3463 /* H264HwEncoderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AB7DEF31F0A1EB000AC3463 /* H264HwEncoderImpl.m */; };
 		9ACFA8231F9B3B7600ECD3C2 /* H265HwDecodeTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ACFA8221F9B3B7600ECD3C2 /* H265HwDecodeTool.m */; };
-		9ACFA8261F9B3B9200ECD3C2 /* AACDecodeTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ACFA8251F9B3B9200ECD3C2 /* AACDecodeTool.m */; };
+		9ACFA8261F9B3B9200ECD3C2 /* AACPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ACFA8251F9B3B9200ECD3C2 /* AACPlayer.m */; };
 		9ACFA8281F9B431900ECD3C2 /* h265_aac.mov in Resources */ = {isa = PBXBuildFile; fileRef = 9ACFA8271F9B431900ECD3C2 /* h265_aac.mov */; };
 		9AD09CA91F1F7BB300125705 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD09CA81F1F7BB300125705 /* AVFoundation.framework */; };
 		9AD09CAB1F1F7BBB00125705 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD09CAA1F1F7BBB00125705 /* libz.tbd */; };
@@ -302,6 +303,8 @@
 		9A33A3661F4C216C00AAB8A3 /* XXH265FileDecodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XXH265FileDecodeViewController.h; sourceTree = "<group>"; };
 		9A33A3671F4C216C00AAB8A3 /* XXH265FileDecodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XXH265FileDecodeViewController.m; sourceTree = "<group>"; };
 		9A33A3691F4C5CEF00AAB8A3 /* h265.hevc */ = {isa = PBXFileReference; lastKnownFileType = file; path = h265.hevc; sourceTree = "<group>"; };
+		9A50A46C1FA20FD20059CAF0 /* AACAudioState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AACAudioState.h; sourceTree = "<group>"; };
+		9A50A46D1FA20FD20059CAF0 /* AACAudioState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AACAudioState.m; sourceTree = "<group>"; };
 		9A7603861F288E7800CAA2E3 /* FFmpegTest.yuv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FFmpegTest.yuv; sourceTree = "<group>"; };
 		9A76039E1F2B1CDF00CAA2E3 /* sintel.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = sintel.mov; sourceTree = "<group>"; };
 		9A78FA1C1F6B6BA800EFE3C2 /* H265RGBDecoderImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = H265RGBDecoderImpl.h; sourceTree = "<group>"; };
@@ -781,8 +784,8 @@
 		9AB7DEFE1F0A1EEB00AC3463 /* AAPLEAGLLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLEAGLLayer.h; sourceTree = "<group>"; };
 		9ACFA8211F9B3B7600ECD3C2 /* H265HwDecodeTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = H265HwDecodeTool.h; sourceTree = "<group>"; };
 		9ACFA8221F9B3B7600ECD3C2 /* H265HwDecodeTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = H265HwDecodeTool.m; sourceTree = "<group>"; };
-		9ACFA8241F9B3B9200ECD3C2 /* AACDecodeTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AACDecodeTool.h; sourceTree = "<group>"; };
-		9ACFA8251F9B3B9200ECD3C2 /* AACDecodeTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AACDecodeTool.m; sourceTree = "<group>"; };
+		9ACFA8241F9B3B9200ECD3C2 /* AACPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AACPlayer.h; sourceTree = "<group>"; };
+		9ACFA8251F9B3B9200ECD3C2 /* AACPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AACPlayer.m; sourceTree = "<group>"; };
 		9ACFA8271F9B431900ECD3C2 /* h265_aac.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = h265_aac.mov; sourceTree = "<group>"; };
 		9AD09C231F1F7B9D00125705 /* avcodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avcodec.h; sourceTree = "<group>"; };
 		9AD09C241F1F7B9D00125705 /* avdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = avdct.h; sourceTree = "<group>"; };
@@ -1074,8 +1077,10 @@
 				9A9BA52D1F7F44CF00EE8D97 /* FileFFmpegRemuxTool.m */,
 				9ACFA8211F9B3B7600ECD3C2 /* H265HwDecodeTool.h */,
 				9ACFA8221F9B3B7600ECD3C2 /* H265HwDecodeTool.m */,
-				9ACFA8241F9B3B9200ECD3C2 /* AACDecodeTool.h */,
-				9ACFA8251F9B3B9200ECD3C2 /* AACDecodeTool.m */,
+				9A50A46C1FA20FD20059CAF0 /* AACAudioState.h */,
+				9A50A46D1FA20FD20059CAF0 /* AACAudioState.m */,
+				9ACFA8241F9B3B9200ECD3C2 /* AACPlayer.h */,
+				9ACFA8251F9B3B9200ECD3C2 /* AACPlayer.m */,
 			);
 			path = DecodeFFmpeg;
 			sourceTree = "<group>";
@@ -2365,7 +2370,7 @@
 				9AA396061F00B3D100F96402 /* GPUImageLightenBlendFilter.m in Sources */,
 				9AF012401F49B0F2003C0453 /* XXFFmpegRemuxerViewController.m in Sources */,
 				9AA395DD1F00B3D100F96402 /* GPUImageDissolveBlendFilter.m in Sources */,
-				9ACFA8261F9B3B9200ECD3C2 /* AACDecodeTool.m in Sources */,
+				9ACFA8261F9B3B9200ECD3C2 /* AACPlayer.m in Sources */,
 				9AA3961C1F00B3D100F96402 /* GPUImageNormalBlendFilter.m in Sources */,
 				9AA395BE1F00B3D100F96402 /* GPUImageAverageColor.m in Sources */,
 				9AA393871F00ADE800F96402 /* UIImageView+AFNetworking.m in Sources */,
@@ -2391,6 +2396,7 @@
 				9AB7DEFF1F0A1F4B00AC3463 /* LASessionSize.m in Sources */,
 				9AA3964E1F00B3D100F96402 /* GPUImageToneCurveFilter.m in Sources */,
 				9AA395E61F00B3D100F96402 /* GPUImageFilterGroup.m in Sources */,
+				9A50A46E1FA20FD20059CAF0 /* AACAudioState.m in Sources */,
 				9AA3965A1F00B3D100F96402 /* GPUImageVoronoiConsumerFilter.m in Sources */,
 				9AA396251F00B3D100F96402 /* GPUImagePixellatePositionFilter.m in Sources */,
 				9AA3965E1F00B3D100F96402 /* GPUImageZoomBlurFilter.m in Sources */,

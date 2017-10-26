@@ -13,7 +13,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 
 #import "H265HwDecodeTool.h"
-#import "AACDecodeTool.h"
+#import "AACPlayer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,7 +43,7 @@ extern "C" {
     const char *in_filename;
     
     H265HwDecodeTool *_h265HwDecodeTool;
-    AACDecodeTool *_aacDecodeTool;
+    AACPlayer *_aacDecodeTool;
 }
 @end
 
@@ -52,7 +52,7 @@ extern "C" {
 -(instancetype)init{
     if(self = [super init]){
         _h265HwDecodeTool = [[H265HwDecodeTool alloc] init];
-        _aacDecodeTool = [[AACDecodeTool alloc] init];
+        _aacDecodeTool = [[AACPlayer alloc] init];
     }
     return self;
 }

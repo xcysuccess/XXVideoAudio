@@ -25,7 +25,7 @@ extern "C" {
 };
 #endif
 
-@interface AACDecodeTool : NSObject
+@interface AACPlayer : NSObject
 
 
 -(void) setParameters:(AVCodecParameters*) parameters;
