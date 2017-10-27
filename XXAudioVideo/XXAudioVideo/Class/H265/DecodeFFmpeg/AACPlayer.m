@@ -8,8 +8,9 @@
 //  http://blog.csdn.net/cairo123/article/details/53839980
 //  https://github.com/kCFNull/AudioConverterExample http://www.jianshu.com/p/af806688fc7c
 //  https://developer.apple.com/library/content/samplecode/AudioFileStreamExample/Listings/afsclient_cpp.html
-
+//  https://github.com/msching/MCAudioFileStream
 //  使用AudioQueue播放音乐，一般需要配合AudioFileStream一起，AudioFileStream负责解析音频数据，AudioQueue负责播放解析到的音频数据。
+
 #import "AACPlayer.h"
 #import "AACAudioState.h"
 #import <AudioToolbox/AudioToolbox.h>
@@ -38,7 +39,7 @@
     if (!_state ->_playStarted) {
         [_state reset];
         //1.初始化AudioFileStream
-        OSStatus status = AudioFileStreamOpen((__bridge void * _Nullable)(self),
+        OSStatus status = AudioFileStreamOpen((__bridge void *)_state,
                                               XXAudioFileStream_PropertyListenerProc,//当解析到一个音频信息时，将回调该方法
                                               XXAudioStreamPacketsProc,              //当解析到一个音频帧时，将回调该方法
                                               kAudioFileAAC_ADTSType,                //指明音频数据的格式，如果你不知道音频数据的格式，可以传0
@@ -54,6 +55,8 @@
     [self start];
     //2.解析数据
     if (avPacket == NULL || avPacket->data == NULL)
+        return;
+    if (!_state->_playStarted)
         return;
     
     NSLog(@"Recieve packet");
