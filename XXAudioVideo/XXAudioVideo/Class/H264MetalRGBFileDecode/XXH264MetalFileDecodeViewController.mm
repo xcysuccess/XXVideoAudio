@@ -156,17 +156,21 @@ extern "C" {
             }
             
             AVFrame *frame  = av_frame_alloc();
-            if (avcodec_receive_frame(codecCtx, frame) == AVSUCCESS) {
+            while (avcodec_receive_frame(codecCtx, frame) == AVSUCCESS) {
                 NSLog(@"got frame!");
                 CVPixelBufferRef pixBuffer = [self converCVPixelBufferRefFromAVFrame:frame];
                 [_playLayer setPixelBuffer:pixBuffer];
-                sleep(1);
+                if(pixBuffer) {
+                    CVPixelBufferRelease(pixBuffer);
+                }
+                [NSThread sleepForTimeInterval:0.05];
             }
-            av_free(frame);
+            av_frame_free(&frame);
         } else if(packet->stream_index == 1) {
             
         }
     }
+    NSLog(@"end!");
     av_packet_unref(packet);
 }
 

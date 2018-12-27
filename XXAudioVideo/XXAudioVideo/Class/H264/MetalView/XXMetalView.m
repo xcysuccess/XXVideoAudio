@@ -48,6 +48,7 @@ QGVertex quadVertices[] =
 {
     if(_pixelBuffer) {
         CVPixelBufferRelease(_pixelBuffer);
+        _pixelBuffer = NULL;
     }
     _pixelBuffer = CVPixelBufferRetain(pb);
     
@@ -61,7 +62,10 @@ QGVertex quadVertices[] =
 }
 
 - (void) destoryRenderAndFrameBuffer{
-    
+    if(_pixelBuffer) {
+        CVPixelBufferRelease(_pixelBuffer);
+        _pixelBuffer = NULL;
+    }
 }
 
 - (void)layoutSubviews {
