@@ -54,7 +54,7 @@
 -(void) hwDecodePacket:(AVPacket*) avPacket{
     [self start];
     //2.解析数据
-    if (avPacket == NULL || avPacket->data == NULL)
+    if (avPacket == NULL || avPacket->data == NULL || avPacket->size == 4)
         return;
     if (!_state->_playStarted)
         return;

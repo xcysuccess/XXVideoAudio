@@ -26,7 +26,7 @@ extern "C" {
 #ifdef __cplusplus
 };
 #endif
-
+#import "H265DecodeModel.h"
 @interface H265HwDecodeTool()
 {
     VTDecompressionSessionRef session;
@@ -48,14 +48,49 @@ static void DecompressionOutputCallback(void *  decompressionOutputRefCon,
         assert(0);
         return;
     }
+    addListBuffers(pixelBuffer, CMTimeGetSeconds(presentationTimeStamp),decompressionOutputRefCon);
     
-    H265HwDecodeTool *decoder = (__bridge H265HwDecodeTool *)decompressionOutputRefCon;
-    if (decoder.delegate!=nil){
-        NSLog(@"presentationTimeStampValue:%f",CMTimeGetSeconds(presentationTimeStamp));
-        [decoder.delegate displayH265DecodedFrame:pixelBuffer];
-    }
+
 }
 
+static void addListBuffers(CVImageBufferRef pixelBuffer,
+                           CGFloat pts,
+                           void *  decompressionOutputRefCon){
+    static NSMutableArray *arrayImageBuffers;
+    if(!arrayImageBuffers){
+        arrayImageBuffers = [NSMutableArray array];
+    }
+    H265DecodeModel* model = [H265DecodeModel new];
+    model.pixelBuffer = pixelBuffer;
+    model.pts = pts;
+    [arrayImageBuffers addObject:model];
+    
+    NSArray *comparatorSortedArray = [arrayImageBuffers sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        H265DecodeModel *model1 = obj1;
+        H265DecodeModel *model2 = obj2;
+        
+        CGFloat pts1 = model1.pts;
+        CGFloat pts2 = model2.pts;
+        
+        if(pts1 < pts2){
+            return (NSComparisonResult)NSOrderedAscending;
+        } else if ( pts1 > pts2 ) {
+            return (NSComparisonResult)NSOrderedDescending;
+        } else {
+            return (NSComparisonResult)NSOrderedSame;
+        }
+    }];
+    
+    if(comparatorSortedArray.count == 6){
+        H265DecodeModel *model = [comparatorSortedArray firstObject];
+        H265HwDecodeTool *decoder = (__bridge H265HwDecodeTool *)decompressionOutputRefCon;
+        if (decoder.delegate!=nil){
+            NSLog(@"presentationTimeStampValue:%f",pts);
+            [decoder.delegate displayH265DecodedFrame:model.pixelBuffer];
+        }
+        [arrayImageBuffers removeObjectsInRange:NSMakeRange(0, 1)];
+    }
+}
 
 -(void) setParameters:(AVCodecParameters*) parameters{
     

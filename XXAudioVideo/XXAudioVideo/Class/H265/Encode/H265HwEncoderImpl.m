@@ -4,7 +4,7 @@
 //
 //  Created by tomxiang on 2017/7/6.
 //  Copyright © 2017年 tomxiang. All rights reserved.
-//
+//  https://github.com/ChengyangLi/XDXHardwareEncoder
 
 #import "H265HwEncoderImpl.h"
 #import "LAScreenEx.h"
@@ -99,8 +99,7 @@
 //http://km.oa.com/group/16071/articles/show/288149?kmref=search&from_page=2&no=5
 - (void) encode:(CMSampleBufferRef )sampleBuffer
 {
-    if (EncodingSession==nil||EncodingSession==NULL)
-    {
+    if (EncodingSession==nil||EncodingSession==NULL){
         return;
     }
     dispatch_sync(aQueue, ^{
@@ -109,6 +108,8 @@
         CMTime duration = CMSampleBufferGetOutputDuration(sampleBuffer);
         
         CMTime presentationTimeStamp = CMTimeMake(frameID, 1000);
+//        [self doSetBitrate];
+
         VTEncodeInfoFlags flags;
         OSStatus statusCode = VTCompressionSessionEncodeFrame(EncodingSession,
                                                               imageBuffer,
@@ -121,6 +122,7 @@
         {
             if (EncodingSession!=nil||EncodingSession!=NULL)
             {
+                VTCompressionSessionCompleteFrames(EncodingSession, kCMTimeInvalid);
                 VTCompressionSessionInvalidate(EncodingSession);
                 CFRelease(EncodingSession);
                 EncodingSession = NULL;
@@ -133,6 +135,8 @@
 // 编码完成回调
 void didCompressH265(void *outputCallbackRefCon,void *sourceFrameRefCon,OSStatus status,VTEncodeInfoFlags infoFlags,CMSampleBufferRef sampleBuffer){
     if (status != noErr) {
+        NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:status userInfo:nil];
+        NSLog(@"H265 vtH265CallBack failed with %@", error);
         return;
     }
     if (!CMSampleBufferDataIsReady(sampleBuffer)) {
@@ -164,28 +168,34 @@ void didCompressH265(void *outputCallbackRefCon,void *sourceFrameRefCon,OSStatus
         //check vps
         size_t vpsSetSize,vpsSetCount;
         const uint8_t *vpsSet;
-        OSStatus statusCodeVps = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(format, 0, &vpsSet, &vpsSetSize, &vpsSetCount, 0);
         
-        //check sps
-        size_t spsSetSize,spsSetCount;
-        const uint8_t *spsSet;
-        OSStatus statusCodeSps = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(format, 1, &spsSet, &spsSetSize, &spsSetCount, 0);
-        
-        //check pps
-        size_t ppsSetSize,ppsSetCount;
-        const uint8_t *ppsSet;
-        OSStatus statusCodePps = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(format, 2, &ppsSet, &ppsSetSize, &ppsSetCount, 0);
-        
-        if(statusCodeVps == noErr && statusCodeSps == noErr && statusCodePps == noErr){
-            // Found pps
-            encoder->vps = [NSData dataWithBytes:vpsSet length:vpsSetSize];
-            encoder->sps = [NSData dataWithBytes:spsSet length:spsSetSize];
-            encoder->pps = [NSData dataWithBytes:ppsSet length:ppsSetSize];
-            if(encoder.delegate){
-                [encoder->_delegate getVpsSpsPps:encoder->vps sps:encoder->sps pps:encoder->pps];
+        if (@available(iOS 11.0, *)) {
+            OSStatus statusCodeVps = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(format, 0, &vpsSet, &vpsSetSize, &vpsSetCount, 0);
+            
+            //check sps
+            size_t spsSetSize,spsSetCount;
+            const uint8_t *spsSet;
+            OSStatus statusCodeSps = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(format, 1, &spsSet, &spsSetSize, &spsSetCount, 0);
+            
+            //check pps
+            size_t ppsSetSize,ppsSetCount;
+            const uint8_t *ppsSet;
+            OSStatus statusCodePps = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(format, 2, &ppsSet, &ppsSetSize, &ppsSetCount, 0);
+            
+            if(statusCodeVps == noErr && statusCodeSps == noErr && statusCodePps == noErr){
+                // Found pps
+                encoder->vps = [NSData dataWithBytes:vpsSet length:vpsSetSize];
+                encoder->sps = [NSData dataWithBytes:spsSet length:spsSetSize];
+                encoder->pps = [NSData dataWithBytes:ppsSet length:ppsSetSize];
+                if(encoder.delegate){
+                    [encoder->_delegate getVpsSpsPps:encoder->vps sps:encoder->sps pps:encoder->pps];
+                }
             }
+        } else {
+            // Fallback on earlier versions
         }
     }
+    
     CMBlockBufferRef dataBuffer = CMSampleBufferGetDataBuffer(sampleBuffer);
     size_t length, totalLength;
     char *dataPointer;
@@ -219,5 +229,53 @@ void didCompressH265(void *outputCallbackRefCon,void *sourceFrameRefCon,OSStatus
     CFRelease(EncodingSession);
     EncodingSession = NULL;
 }
+
+//-(void)doSetBitrate {
+//    static int oldBitrate = 0;
+//    if(![self needAdjustBitrate]) return;
+//
+//    int tmp         = _bitrate;
+//    int bytesTmp    = tmp >> 3;
+//    int durationTmp = 1;
+//
+//    CFNumberRef bitrateRef   = CFNumberCreate(NULL, kCFNumberSInt32Type, &tmp);
+//    CFNumberRef bytes        = CFNumberCreate(NULL, kCFNumberSInt32Type, &bytesTmp);
+//    CFNumberRef duration     = CFNumberCreate(NULL, kCFNumberSInt32Type, &durationTmp);
+//
+//    if (self.enableH264) {
+//        if (h264CompressionSession) {
+//            if ([self isSupportPropertyWithKey:Key_AverageBitRate inArray:self.h264propertyFlags]) {
+//                [self setSessionProperty:h264CompressionSession key:kVTCompressionPropertyKey_AverageBitRate value:bitrateRef];
+//            }else {
+//                NSLog(@"TVUEncoder : h264 set Key_AverageBitRate error");
+//            }
+//
+//            // NSLog(@"TVUEncoder : h264 setBitrate bytes = %d, _bitrate = %d",bytesTmp, _bitrate);
+//
+//            CFMutableArrayRef limit = CFArrayCreateMutable(NULL, 2, &kCFTypeArrayCallBacks);
+//            CFArrayAppendValue(limit, bytes);
+//            CFArrayAppendValue(limit, duration);
+//            if([self isSupportPropertyWithKey:Key_DataRateLimits inArray:self.h264propertyFlags]) {
+//                OSStatus ret = VTSessionSetProperty(h264CompressionSession, kVTCompressionPropertyKey_DataRateLimits, limit);
+//                if(ret != noErr){
+//                    NSError *error = [NSError errorWithDomain:NSOSStatusErrorDomain code:ret userInfo:nil];
+//                    NSLog(@"H264: set DataRateLimits failed with %@", error.description);
+//                }
+//            }else {
+//                NSLog(@"TVUEncoder : H264 set Key_DataRateLimits error");
+//            }
+//            CFRelease(limit);
+//        }
+//    }
+//
+//    if (self.enableH265) {
+//        /*  Not support for the moment */
+//    }
+//
+//    CFRelease(bytes);
+//    CFRelease(duration);
+//
+//    oldBitrate = _bitrate;
+//}
 
 @end

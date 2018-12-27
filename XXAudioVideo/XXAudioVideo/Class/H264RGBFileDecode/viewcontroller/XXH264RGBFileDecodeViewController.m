@@ -83,7 +83,7 @@
         return;
     }
     
-    NSString *h264FileSavePath = [[NSBundle mainBundle] pathForResource:@"test" ofType:@"h264"];
+    NSString *h264FileSavePath = [[NSBundle mainBundle] pathForResource:@"testRGB" ofType:@"h264"];
     _fileParser = [VideoFileParser alloc];
     [_fileParser open:h264FileSavePath];
     
