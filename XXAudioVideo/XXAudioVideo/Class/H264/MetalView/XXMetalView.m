@@ -20,6 +20,15 @@ QGVertex quadVertices[] =
     { {  1.0,  1.0, 0.0, 1.0 },  { 1.f, 0.f } },
 };
 
+matrix_float3x3 kColorConversion601FullRangeMatrix = (matrix_float3x3){
+    (simd_float3){1.0,    1.0,    1.0},
+    (simd_float3){0.0,    -0.343, 1.765},
+    (simd_float3){1.4,    -0.711, 0.0},
+};
+
+//这个是偏移
+vector_float3 kColorConversion601FullRangeOffset = (vector_float3){ 0, -0.5, -0.5};
+
 
 @interface XXMetalView()
 {
@@ -117,14 +126,6 @@ QGVertex quadVertices[] =
     _numVertices = sizeof(quadVertices) / sizeof(QGVertex); // 顶点个数
 }
 - (void)setupMatrix { // 设置好转换的矩阵
-    matrix_float3x3 kColorConversion601FullRangeMatrix = (matrix_float3x3){
-        (simd_float3){1.0,    1.0,    1.0},
-        (simd_float3){0.0,    -0.343, 1.765},
-        (simd_float3){1.4,    -0.711, 0.0},
-    };
-    
-    vector_float3 kColorConversion601FullRangeOffset = (vector_float3){ 0, -0.5, -0.5}; // 这个是偏移
-    
     QGConvertMatrix matrix;
     // 设置参数
     matrix.matrix = kColorConversion601FullRangeMatrix;
