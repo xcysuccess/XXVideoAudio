@@ -163,7 +163,7 @@ extern "C" {
                 if(pixBuffer) {
                     CVPixelBufferRelease(pixBuffer);
                 }
-                [NSThread sleepForTimeInterval:0.05];
+                [NSThread sleepForTimeInterval:3.f];
             }
             av_frame_free(&frame);
         } else if(packet->stream_index == 1) {

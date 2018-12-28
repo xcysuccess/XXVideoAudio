@@ -36,7 +36,6 @@ vector_float3 kColorConversion601FullRangeOffset = (vector_float3){ 0, -0.5, -0.
     
     id<MTLRenderPipelineState> _renderPipelineState;
     id<MTLCommandQueue> _commandQueue;
-    id<MTLTexture> _texture;
     id<MTLBuffer> _vertices;
     id<MTLBuffer> _convertMatrix;
     NSUInteger _numVertices;
@@ -69,7 +68,12 @@ vector_float3 kColorConversion601FullRangeOffset = (vector_float3){ 0, -0.5, -0.
 + (Class)layerClass{
     return [CAMetalLayer class];
 }
-
+- (void)dealloc{
+    if(_textureCache){
+        CFRelease(_textureCache);
+        _textureCache = NULL;
+    }
+}
 - (void) destoryRenderAndFrameBuffer{
     if(_pixelBuffer) {
         CVPixelBufferRelease(_pixelBuffer);
@@ -176,9 +180,6 @@ vector_float3 kColorConversion601FullRangeOffset = (vector_float3){ 0, -0.5, -0.
 
 // 设置纹理
 - (void)setupTextureWithEncoder:(id<MTLRenderCommandEncoder>)encoder buffer:(CVPixelBufferRef)pixelBuffer {
-    
-
-    
     // textureY 设置
     CVMetalTextureRef yTextureRef;
     size_t ywidth = CVPixelBufferGetWidthOfPlane(pixelBuffer, 0);
@@ -197,11 +198,17 @@ vector_float3 kColorConversion601FullRangeOffset = (vector_float3){ 0, -0.5, -0.
     
     id <MTLTexture> yTexture = CVMetalTextureGetTexture(yTextureRef);
     id <MTLTexture> uvTexture = CVMetalTextureGetTexture(uvTextureRef);
+    if(yTextureRef){
+        CFRelease(yTextureRef);
+    }
+    if(uvTextureRef){
+        CFRelease(uvTextureRef);
+    }
     
     if (yTexture == nil || uvTexture == nil) {
         return;
     }
-    
+
     [encoder setFragmentTexture:yTexture atIndex:QGFragmentTextureIndexTextureY]; // 设置纹理
     [encoder setFragmentTexture:uvTexture atIndex:QGFragmentTextureIndexTextureUV]; // 设置纹理
 }

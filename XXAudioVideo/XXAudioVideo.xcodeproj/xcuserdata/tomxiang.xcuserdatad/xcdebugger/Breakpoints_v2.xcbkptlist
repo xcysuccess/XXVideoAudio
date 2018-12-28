@@ -20,12 +20,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "XXAudioVideo/Class/H264MetalRGBFileDecode/XXH264MetalFileDecodeViewController.mm"
-            timestampString = "567574903.03711"
+            timestampString = "567658914.843092"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "174"
             endingLineNumber = "174"
             landmarkName = "-play"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "XXAudioVideo/Class/H264MetalRGBFileDecode/XXH264MetalFileDecodeViewController.mm"
+            timestampString = "567658914.843403"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "-playBtnEventHandler:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
