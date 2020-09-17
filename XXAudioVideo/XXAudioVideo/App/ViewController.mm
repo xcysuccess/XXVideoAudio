@@ -18,6 +18,7 @@
 #import "XXH265RGBFileDecodeViewController.h"
 #import "XXFFmpegHwFileDcodeViewController.h"
 #import "LAScreenEx.h"
+#import "QGEdisonViewController.h"
 
 #define BASECELLIDENDIFIFY @"BASE_CELL_IDENDIFIFY"
 
@@ -41,7 +42,8 @@
                              @"H264硬解-RGB格式并上屏",
                              @"H264硬解-Metal-RGB格式并上屏",
                              @"H265硬解-RGB格式并上屏",
-                             @"H265硬解-FFmpeg读取上屏",nil];
+                             @"H265硬解-FFmpeg读取上屏",
+                             @"QGEdison-全流程-Filter",nil];
     self.listArray = array;
     
 }
@@ -138,6 +140,10 @@
             break;
         case 9:{
             viewController = [[XXFFmpegHwFileDcodeViewController alloc] init];
+        }
+            break;
+        case 10:{
+            viewController = [[QGEdisonViewController alloc] init];
         }
             break;
         default:

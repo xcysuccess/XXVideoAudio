@@ -21,5 +21,8 @@
 
 @interface XXFileDecodeView : UIView
 @property (weak, nonatomic) id<XXFileDecodeViewDelegate> delegate;
+@property (readonly, nonatomic,strong) UIButton *buttonStart;
+@property (readonly, nonatomic,strong) UIButton *buttonStop;
+@property (readonly, nonatomic,strong) UIButton *buttonStyleClose;
 
 @end
